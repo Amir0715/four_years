@@ -1,6 +1,4 @@
-from django.db import models
 from django.core.validators import RegexValidator, MinLengthValidator
-from django.db import models
 from django.conf import settings
 from django.utils import timezone
 from django.db import models
@@ -49,13 +47,6 @@ class UserManager(BaseUserManager):
         kwargs.setdefault('is_staff', True)
         kwargs.setdefault('is_superuser', True)
         kwargs.setdefault('is_active', True)
-
-        # user = self.create_user(
-        #     email,
-        #     password,
-        #     **kwargs
-        # )
-        # user.save()
 
         return self.create_user(
             email,

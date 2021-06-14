@@ -14,12 +14,8 @@ class CustomUserAdmin(UserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'password')}),
         ('Permissions', {'fields': ('is_staff', 'is_active')}),
-    )
-    add_fieldsets = (
-        (None, {
-            'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2', 'is_staff', 'is_active')}
-         ),
+        ('Personal information', {'fields': ['first_name', 'last_name', 'patronymic', 'date_of_birth', 'series_passport', 'number_passport', 'school']}),
+
     )
 
     search_fields = ('email',)
