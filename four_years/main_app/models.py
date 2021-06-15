@@ -79,7 +79,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_time_visit = models.DateTimeField(default=timezone.now)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    # is_superuser = models.BooleanField(default=False)
 
     objects = UserManager()
 
@@ -96,7 +95,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class ApplicationForm(models.Model):
-    id_user = models.ForeignKey(settings.AUTH_USER_MODEL , on_delete=models.CASCADE)
+    id_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     id_address = models.ForeignKey('Address', on_delete=models.CASCADE)
     status = models.BooleanField(default=False)
     creature_date = models.DateTimeField(auto_now_add=True)

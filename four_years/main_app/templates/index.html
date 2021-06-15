@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="content">
+    <div class="auth_buttons">
+        {% if user.is_authenticated %}
+            Вы авторизованны как {{ user.first_name }} {{ user.last_name }}
+        <a href="{% url 'main_app:logout' %}">Выйти</a>
+        {% else %}
+        <a href="{% url 'main_app:registration' %}">Регистрация</a>
+        <a href="{% url 'main_app:auth' %}">Авторизация</a>
+        {% endif %}
+    </div>
+    <div class="forms__main">
+        <h1>Онлайн подача документов</h1>
+        {% if user.is_authenticated %}
+        <div class="form__main">
+            <img src="">
+            <a href="{% url 'main_app:application' %}">Подать анкету</a>
+        </div>
+        <div class="form__main">
+            <img src="">
+            <a href="{% url 'main_app:account' %}">Личный кабинет</a>
+        </div>
+        {% else %}
+        <div class="form__main">
+            <img src="">
+            <a href="{% url 'main_app:auth' %}">Подать анкету</a>
+        </div>
+        <div class="form__main">
+            <img src="">
+            <a href="{% url 'main_app:auth' %}">Личный кабинет</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
