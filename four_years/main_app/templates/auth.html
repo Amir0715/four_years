@@ -5,31 +5,42 @@
 {% block head_title %}Авторизация{% endblock %}
 
 {% block content %}
-<div class="section__left">
+<div class="section__left img_sova">
     <img src="{% static 'img/sova.png' %}">
 </div>
 
-    <div class="section__right">
+<div class="section__right">
+    <div class="form__errors">
         {% if form.errors %}
-            <p class="error">Сожалеем, вы неправильно ввели логин или пароль</p>
+        <p class="error">Сожалеем, вы неправильно ввели логин или пароль</p>
         {% endif %}
-
+    </div>
+    <div class="form">
         <form action="{% url 'main_app:auth' %}" method="post">
-             {% csrf_token %}
-        <table>
-        <tr>
-            <td>{{ form.email.label_tag }}</td>
-            <td>{{ form.email }}</td>
-        </tr>
-        <tr>
-            <td>{{ form.password.label_tag }}</td>
-            <td>{{ form.password }}</td>
-        </tr>
-        </table>
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <td>{{ form.email.label_tag }}</td>
+                    <td>{{ form.email }}</td>
+                </tr>
+                <tr>
+                    <td>{{ form.password.label_tag }}</td>
+                    <td>{{ form.password }}</td>
+                </tr>
+            </table>
 
-        <input type="submit" value="Войти" />
-        <input type="hidden" name="next" value="{% url 'main_app:index' %}" />
-
+            <input type="submit" value="Войти"/>
+            <input type="hidden" name="next" value="{% url 'main_app:index' %}"/>
+            <div class="errors__wrapper">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <span class="error">
+                            {{ error }}
+                        </span>
+                    {% endfor %}
+                {% endfor %}
+            </div>
         </form>
     </div>
+</div>
 {% endblock %}

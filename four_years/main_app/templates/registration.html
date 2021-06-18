@@ -12,7 +12,7 @@
 
 <div class="section__right">
     {% if form.errors %}
-        <p class="error">Вы неправильно ввели логин или пароль</p>
+    <p class="error">Вы неправильно ввели логин или пароль</p>
     {% endif %}
 
     <form action="{% url 'main_app:registration' %}" method="post">
@@ -43,9 +43,17 @@
                 <td>{{ form.password2 }}</td>
             </tr>
         </table>
-
-        <input type="submit" value="Зарегистрироваться" />
-        <input type="hidden" name="next" value="{% url 'main_app:index' %}" />
+        <div class="errors__wrapper">
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <span class="error">
+                        {{ error }}
+                    </span>
+                {% endfor %}
+            {% endfor %}
+        </div>
+        <input type="submit" value="Зарегистрироваться"/>
+        <input type="hidden" name="next" value="{% url 'main_app:index' %}"/>
 
     </form>
 </div>

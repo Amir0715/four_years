@@ -1,27 +1,64 @@
-from django.core.validators import RegexValidator, MinLengthValidator
+import hashlib
+import random
+import sys
+
 from django.conf import settings
-from django.utils import timezone
-from django.db import models
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser, PermissionsMixin
 )
+from django.core.validators import RegexValidator, MinLengthValidator
+from django.db import models
+from django.utils import timezone
+
+
+def create_session_hash():
+    hash = hashlib.sha1()
+    hash.update(str(random.randint(0, sys.maxsize)).encode('utf-8'))
+    return hash.hexdigest()
 
 
 class Address(models.Model):
-    region = models.CharField(verbose_name='Школа', max_length=22, null=True, blank=True)
-    locality = models.CharField(verbose_name='Регион', max_length=100, null=True, blank=True)
+    region = models.CharField(verbose_name='Регион', max_length=22, null=True, blank=True)
+    locality = models.CharField(verbose_name='Населенный пункт', max_length=100, null=True, blank=True)
     street = models.CharField(verbose_name='Улица', max_length=100, null=True, blank=True)
     house = models.CharField(verbose_name='Дом', max_length=20, null=True, blank=True)
     housing = models.CharField(verbose_name='Корпус', max_length=20, null=True, blank=True)
-    index = models.CharField(verbose_name='Индекс', max_length=6, validators=[MinLengthValidator(6)],
+    index = models.CharField(verbose_name='Индекс', max_length=6, validators=[MinLengthValidator(6), ],
                              null=True, blank=True)
     numbers_house = models.CharField(verbose_name='Квартира', max_length=3, validators=[MinLengthValidator(3)],
                                      null=True, blank=True)
 
+    class Meta:
+        ordering = ['region']
+        verbose_name = 'Адресс'
+        verbose_name_plural = 'Адресс'
 
-class Choice(models.Model):
-    title_choice = models.CharField(verbose_name='Название', max_length=25)
-    description_choice = models.CharField(verbose_name='Описание', max_length=150)
+
+class University(models.Model):
+    name = models.CharField(verbose_name='Университет', max_length=25)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Университет'
+        verbose_name_plural = 'Университеты'
+
+
+
+class Specialization(models.Model):
+    specialization = models.CharField(verbose_name='Название', max_length=25)
+    description = models.CharField(verbose_name='Описание', max_length=150)
+    university = models.ForeignKey('University', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.specialization
+
+    class Meta:
+        ordering = ['specialization']
+        verbose_name = 'Специальность'
+        verbose_name_plural = 'Специальности'
 
 
 class UserManager(BaseUserManager):
@@ -73,7 +110,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                                        blank=True)
     school = models.CharField(verbose_name='Школа', max_length=150, null=True, blank=True)
 
-    choice = models.ForeignKey('Choice', on_delete=models.CASCADE, null=True, blank=True)
+    choice = models.ForeignKey('Specialization', on_delete=models.CASCADE, null=True, blank=True)
 
     # служебнные
     last_time_visit = models.DateTimeField(default=timezone.now)
@@ -94,8 +131,23 @@ class User(AbstractBaseUser, PermissionsMixin):
         verbose_name_plural = 'Пользователи'
 
 
-class ApplicationForm(models.Model):
+def user_directory_path(instance, filename):
+    # Метод для формирование пути сохранения для файлов
+    return f'{instance.id_user}/application_{instance.pk}/{filename}'
+
+
+class Application(models.Model):
     id_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     id_address = models.ForeignKey('Address', on_delete=models.CASCADE)
+
     status = models.BooleanField(default=False)
     creature_date = models.DateTimeField(auto_now_add=True)
+
+    file_passport = models.FileField(verbose_name='Паспорт', upload_to=user_directory_path)
+    file_certificate = models.FileField(verbose_name='Атестат', upload_to=user_directory_path)
+    file_statement = models.FileField(verbose_name='Заявление', upload_to=user_directory_path)
+    file_other = models.FileField(verbose_name='Другие документы', blank=True, null=True, upload_to=user_directory_path)
+
+    class Meta:
+        verbose_name = 'Анкета'
+        verbose_name_plural = 'Анкеты'

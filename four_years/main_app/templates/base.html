@@ -15,12 +15,6 @@
                 </h1>
             </header>
         </div>
-        <div class="header__title">
-            <h1>
-        {% block head_title %}
-        {% endblock %}
-            </h1>
-        </div>
         <div class="layout__block">
             <section class="section__main">
                 {% block content %}
@@ -49,5 +43,7 @@
         </div>
         {% endblock %}
     </div>
+    {% block javascript %}
+    {% endblock %}
     </body>
 </html>

@@ -1,15 +1,12 @@
 from django.contrib import auth
 from django.contrib.auth import login
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
-
 # Create your views here.
 from django.views import View
-from django.contrib.auth.forms import AuthenticationForm
-from .forms import CustomUserCreationForm, CustomAuthenticationForm
 
-from .models import ApplicationForm
+from .forms import CustomUserCreationForm, CustomAuthenticationForm, ApplicationForm
+from .models import Application, Specialization, University, Address
 
 
 def index(request):
@@ -47,16 +44,68 @@ class AuthView(View):
                 login(request, user)
                 return redirect('main_app:index')
             else:
-                #TODO: Вернуть что пароль или логин неправильный
+                # TODO: Вернуть что пароль или логин неправильный
                 pass
         return render(request, self.template_name, {'form': form})
 
 
 class ApplicationView(View):
     template_name = 'application.html'
+    form_class = ApplicationForm
 
     def get(self, request, *args, **kwargs):
-        pass
+        user = auth.get_user(request)
+        if user.is_authenticated:
+            form = self.form_class(initial={
+                'first_name': user.first_name,
+                'last_name': user.last_name
+            })
+            context = {'form': form}
+
+            return render(request, self.template_name, context)
+        else:
+            return redirect('main_app:auth')
+
+    def post(self, request, *args, **kwargs):
+        user = auth.get_user(request)
+        if user.is_authenticated \
+                and request.FILES['file_passport'] \
+                and request.FILES['file_certificate'] \
+                and request.FILES['file_statement']:
+            # print(type(request.FILES.get('file_passport')))
+
+            form = self.form_class(request.POST, request.FILES)
+
+            print(form.is_valid())
+            # print(form.errors.as_data())
+
+            context = {'form': form}
+
+            if form.is_valid():
+                c = form.cleaned_data
+                # TODO Транзакция
+                address = Address(region=c['region'], locality=c['locality'], street=c['street'], house=c['house'],
+                        housing=c['housing'], index=c['index'], numbers_house=c['numbers_house'])
+                address.save()
+
+                application = Application(id_user=user, id_address=address,
+                                          file_passport=request.FILES['file_passport'],
+                                          file_certificate=request.FILES['file_certificate'],
+                                          file_statement=request.FILES['file_statement'],
+                                          file_other=request.FILES['file_other']
+                                          )
+                application.save()
+
+                user.series_passport = c['series_passport']
+                user.number_passport = c['number_passport']
+                user.school = c['school']
+                user.choice = c['specialization']
+                print(application)
+                return render(request, self.template_name, context)
+            else:
+                return render(request, self.template_name, context)
+        else:
+            return redirect('main_app:auth')
 
 
 class AccountView(View):
@@ -66,8 +115,8 @@ class AccountView(View):
         user = auth.get_user(request)
         if user.is_authenticated:
             try:
-                application = ApplicationForm.objects.get(id_user=user.pk)
-            except ApplicationForm.DoesNotExist:
+                application = Application.objects.get(id_user=user.pk)
+            except Application.DoesNotExist:
                 application = None
             context = {'application': application}
             return render(request, self.template_name, context)
@@ -96,3 +145,23 @@ class RegistrationView(View):
             return redirect('main_app:index')
         return render(request, self.template_name, {'form': form})
 
+
+def get_specializations(request):
+    """
+    Возвращает json со списоком специальностей университета
+    """
+
+    print(request.GET)
+    university = request.GET.get('university', None)
+
+    if university:
+        university = get_object_or_404(University, pk=university)
+        response = {
+            'result': list(Specialization.objects.filter(university=university).values())
+        }
+    else:
+        response = {
+            'result': [{'specialization': 'Выберете университет!', 'id': 0}]
+        }
+
+    return JsonResponse(response)

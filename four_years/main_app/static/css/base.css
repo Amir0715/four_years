@@ -49,19 +49,22 @@ body {
 .header {
     width: 100%;
     background-color: #5050EE;
+    font-size: 1em;
 }
 
 .header__item {
 
 }
 
+
 .title {
     text-align: center;
     color: #FFFFFF;
 }
+
 .header__title {
     border-bottom: 3px solid #5050ee;
-    margin: 0 60% 7em 10%;
+    margin: 0 20%;
 }
 
 .header__title h1 {
@@ -82,12 +85,41 @@ body {
     height: 350px;
 }
 
+.section__application {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    margin: 15px 0px;
+}
+
+
+.column {
+    display: flex;
+    flex-direction: column;
+    margin: 0px 15px;
+}
+
+.errors__wrapper {
+    display: flex;
+    flex-direction: column;
+    color: red;
+}
+
+.description {
+
+}
+
 /* Footer Start*/
 
 .footer {
     display: flex;
     background-color: #5050EE;
-    padding: 2rem;
+    padding: 1rem;
 }
 
 .footer__item {

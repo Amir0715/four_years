@@ -22,7 +22,8 @@ class CustomUserAdmin(UserAdmin):
     ordering = ('email',)
 
 
-admin.site.register(ApplicationForm)
-admin.site.register(Choice)
+admin.site.register(Application)
+admin.site.register(Specialization)
+admin.site.register(University)
 admin.site.register(Address)
 admin.site.register(User, CustomUserAdmin)
