@@ -2,6 +2,10 @@ from django.contrib import admin
 from django.urls import path
 from . import views
 
+"""
+В этом файле мы описываем url адреса, и какие представления вызывать при обращении к ним. 
+"""
+
 app_name = 'main_app'
 urlpatterns = [
     path('', views.index, name='index'),

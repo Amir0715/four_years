@@ -1,7 +1,3 @@
-import hashlib
-import random
-import sys
-
 from django.conf import settings
 from django.contrib.auth.models import (
     BaseUserManager, AbstractBaseUser, PermissionsMixin
@@ -11,13 +7,10 @@ from django.db import models
 from django.utils import timezone
 
 
-def create_session_hash():
-    hash = hashlib.sha1()
-    hash.update(str(random.randint(0, sys.maxsize)).encode('utf-8'))
-    return hash.hexdigest()
-
-
 class Address(models.Model):
+    """
+    Описание типов объектов для базы данных.
+    """
     region = models.CharField(verbose_name='Регион', max_length=22, null=True, blank=True)
     locality = models.CharField(verbose_name='Населенный пункт', max_length=100, null=True, blank=True)
     street = models.CharField(verbose_name='Улица', max_length=100, null=True, blank=True)
@@ -34,14 +27,23 @@ class Address(models.Model):
         verbose_name_plural = 'Адресс'
 
     def __str__(self):
+        """
+        Строковое представление объекта
+        """
         return ', '.join(
             [self.region, self.locality, self.street, self.house, self.housing, self.index, self.numbers_house])
 
 
 class University(models.Model):
+    """
+    Описание типов объектов для базы данных.
+    """
     name = models.CharField(verbose_name='Университет', max_length=25)
 
     def __str__(self):
+        """
+        Строковое представление объекта
+        """
         return self.name
 
     class Meta:
@@ -51,11 +53,17 @@ class University(models.Model):
 
 
 class Specialization(models.Model):
+    """
+    Описание типов объектов для базы данных.
+    """
     specialization = models.CharField(verbose_name='Название', max_length=25)
     description = models.CharField(verbose_name='Описание', max_length=150)
     university = models.ForeignKey('University', on_delete=models.CASCADE)
 
     def __str__(self):
+        """
+        Строковое представление объекта
+        """
         return self.specialization
 
     class Meta:
@@ -65,6 +73,10 @@ class Specialization(models.Model):
 
 
 class UserManager(BaseUserManager):
+    """
+    Описание типов объектов для базы данных.
+    """
+
     def create_user(self, email, password, **kwargs):
         if not email:
             raise ValueError('Users must have an Email')
@@ -96,13 +108,15 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    """
+    Описание типов объектов для базы данных.
+    """
     # главнные поля для регистрации
     email = models.EmailField(verbose_name='Электронная почта', max_length=30, unique=True)
     first_name = models.CharField(verbose_name='Фамилия', max_length=22)
     last_name = models.CharField(verbose_name='Имя', max_length=22)
 
     # профиль
-
     patronymic = models.CharField(verbose_name='Отчество', max_length=22, null=True, blank=True)
     date_of_birth = models.DateField(verbose_name="Дата рождения", null=True, blank=True)
     series_passport = models.CharField(verbose_name='Серия паспорта', max_length=4,
@@ -126,6 +140,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = []
 
     def __str__(self):
+        """
+        Строковое представление объекта
+        """
         return self.email
 
     class Meta:
@@ -135,11 +152,14 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 def user_directory_path(instance, filename):
-    # Метод для формирование пути сохранения для файлов
+    # Метод для формирование пути сохранения для файлов.
     return f'application/{instance.id_user}/{filename}'
 
 
 class Application(models.Model):
+    """
+    Описание типов объектов для базы данных. В бд в полях для хранения файлов, мы храним путь к файлу.
+    """
     id_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     id_address = models.ForeignKey('Address', on_delete=models.CASCADE)
 

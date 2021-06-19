@@ -8,12 +8,18 @@ from django.views import View
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, ApplicationForm
 from .models import Application, Specialization, University, Address, User
 
+"""
+    Представления. Подробнее можно почитать про MVT - model, VIEW, template.  
+"""
 
 def index(request):
     return render(request, 'index.html', {'user': auth.get_user(request)})
 
 
 def logout(request):
+    """
+    Представление для выхода из учетной записи
+    """
     template_name = 'logout.html'
     user = auth.get_user(request)
     if user.is_authenticated:
@@ -24,6 +30,9 @@ def logout(request):
 
 
 class AuthView(View):
+    """
+    Представление для авторизации пользователя
+    """
     template_name = 'auth.html'
     form_class = CustomAuthenticationForm
 
@@ -57,6 +66,9 @@ class AuthView(View):
 
 
 class ApplicationView(View):
+    """
+    Представление для подачи анкеты. Проверяются все поля на валидность, если все поля валидны мы сохраняем файл.
+    """
     template_name = 'application.html'
     form_class = ApplicationForm
 
@@ -115,6 +127,10 @@ class ApplicationView(View):
 
 
 class AccountView(View):
+    """
+    Представление личного кабинета. Получаем объект пользователя если он авторизован,
+    иначе редиректим его на страницу авторизации.
+    """
     template_name = 'account.html'
 
     def get(self, request, *args, **kwargs):
@@ -131,6 +147,10 @@ class AccountView(View):
 
 
 class RegistrationView(View):
+    """
+    Представление для регистрации пользователя. Проверяется сущ. пользователь или нет,
+    если нет то мы его регистрируем.
+    """
     template_name = 'registration.html'
     form_class = CustomUserCreationForm
 
@@ -156,7 +176,6 @@ def get_specializations(request):
     """
     Возвращает json со списоком специальностей университета
     """
-
     print(request.GET)
     university = request.GET.get('university', None)
 

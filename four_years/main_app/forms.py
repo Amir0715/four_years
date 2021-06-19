@@ -5,6 +5,10 @@ from django.core.validators import RegexValidator, MinLengthValidator, FileExten
 
 from .models import User, University, Specialization
 
+"""
+    Формы которые обрабатываются и возвращаются.
+"""
+
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm):
@@ -27,10 +31,6 @@ class CustomUserChangeForm(UserChangeForm):
         fields = ('email',)
 
 
-# TODO: протестировать вывод ошибок
-# TODO: сделать человеко-читаемый вывод ошибок
-# TODO: разрешить только ввод русских букв для имени и фамилии
-# TODO:
 class CustomAuthenticationForm(forms.Form):
     email = forms.EmailField(label='Эл.почта', widget=forms.EmailInput, max_length=30)
     password = forms.CharField(label='Пароль', widget=forms.PasswordInput)
@@ -41,6 +41,9 @@ class CustomAuthenticationForm(forms.Form):
 
 
 class ApplicationForm(forms.Form):
+    """
+    Форма подачи анкеты. Описанны поля и валидаторы к ним.
+    """
     # Левая колонка
     first_name = forms.CharField(label='Фамилия', max_length=22)
     last_name = forms.CharField(label='Имя', max_length=22)
@@ -107,10 +110,13 @@ class ApplicationForm(forms.Form):
                                message='Файл заявления должен быть с расширением pdf!')])
     file_other = forms.FileField(label='Другие документы', allow_empty_file=True, required=False,
                                  widget=forms.FileInput(attrs={'accept': '.pdf'}), validators=[
-        FileExtensionValidator(allowed_extensions=['pdf'],
+            FileExtensionValidator(allowed_extensions=['pdf'],
                                    message='Другой файл  должен быть с расширением pdf!')])
 
     def clean_file_passport(self):
+        """
+        Валидация расширения файла и его размера, иначе кидаем исключение с сообщением.
+        """
         file = self.cleaned_data.get('file_passport', False)
         if file:
             if file.size > 1 * 1024 * 1024:
@@ -120,6 +126,9 @@ class ApplicationForm(forms.Form):
             raise ValidationError('Невозможно прочитать файл!')
 
     def clean_file_certificate(self):
+        """
+        Валидация расширения файла и его размера, иначе кидаем исключение с сообщением.
+        """
         file = self.cleaned_data.get('file_certificate', False)
         if file:
             if file.size > 1 * 1024 * 1024:
@@ -129,6 +138,9 @@ class ApplicationForm(forms.Form):
             raise ValidationError('Невозможно прочитать файл!')
 
     def clean_file_statement(self):
+        """
+        Валидация расширения файла и его размера, иначе кидаем исключение с сообщением.
+        """
         file = self.cleaned_data.get('file_statement', False)
         if file:
             if file.size > 1 * 1024 * 1024:
@@ -138,6 +150,9 @@ class ApplicationForm(forms.Form):
             raise ValidationError('Невозможно прочитать файл!')
 
     def clean_file_other(self):
+        """
+        Валидация расширения файла и его размера, иначе кидаем исключение с сообщением.
+        """
         file = self.cleaned_data.get('file_other', False)
         if file:
             if file.size > 1 * 1024 * 1024:
