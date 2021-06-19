@@ -85,7 +85,13 @@ body {
     justify-content: space-around;
     flex-direction: column;
     margin: 0px 20px;
+    font-size: 16pt;
 }
+
+td {
+    font-size: 16pt;
+}
+
 
 img {
     margin: 20px;
@@ -96,6 +102,21 @@ img {
 .main {
     display: flex;
     justify-content: space-evenly;
+}
+
+.personal__info {
+    /*text-align: center;*/
+    background-color: #e3e3e3;
+    /*border: solid 1px #cccccc;*/
+    width: 500px;
+    height: 30px;
+    padding: 5px 0px 0 10px;
+
+}
+
+.account__table {
+    font-size: 18pt;
+    border-spacing: 30px 10px;
 }
 
 .section__application {
@@ -123,8 +144,21 @@ img {
     color: red;
 }
 
-.description {
+.align__items__center {
+    align-items: center;
+}
 
+.description__text {
+    width: 480px;
+    /*height: 60px;*/
+
+    /* = Добавим фон, рамку, отступ*/
+    background: #f6f6f6;
+    border: 1px solid #cecece;
+    border-radius: 5px;
+    padding: 8px 0 8px 10px;
+    margin-right: 10px;
+    font-size: 14pt;
 }
 
 .row__center {
@@ -194,15 +228,17 @@ a {
 
 table {
     border-spacing: 10px 5px;
-
 }
 
 .input_text input {
     width: 300px;
+    height: 40px;
     padding: 6px;
     border: 1px solid #cecece;
     background: #F6F6f6;
     border-radius: 5px;
+    font-size: 12pt;
+
 }
 
 .input_btn input {
@@ -212,7 +248,31 @@ table {
     color:#fff;
     border-radius: 5px;
     padding: 8px 14px;
-    width: 120px;
+    width: 200px;
+    height: 40px;
+    font-size: 12pt;
+}
+
+textarea {
+    /* = Убираем скролл */
+    overflow: auto;
+
+    /* = Убираем увеличение */
+    resize: none;
+    width: 550px;
+    height: 60px;
+
+    /* = Добавим фон, рамку, отступ*/
+    background: #f6f6f6;
+    border: 1px solid #cecece;
+    border-radius: 5px;
+    padding: 8px 0 8px 10px;
+    margin-right: 10px;
+}
+
+#date_of_birth {
+    display: flex;
+    justify-content: space-around;
 }
 
 /* Form End */
@@ -245,6 +305,7 @@ table {
 
 .span {
     color: white;
+    font-size: 14pt;
 }
 
 .username {

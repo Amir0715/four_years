@@ -10,31 +10,33 @@
         <img src="{% static 'img/sova.png' %}">
     </div>
     <div class="section__right">
-        <table>
+        <table class="account__table">
             <tr>
                 <td>Фамилия</td>
-                <td>{{ user.first_name }}</td>
+                <td><p class="personal__info">{{ user.first_name }}</p></td>
             </tr>
             <tr>
                 <td>Имя</td>
-                <td>{{ user.last_name }}</td>
+                <td><p class="personal__info">{{ user.last_name }}</p></td>
             </tr>
             <tr>
                 <td>Электронная почта</td>
-                <td>{{ user.email }}</td>
+                <td><p class="personal__info">{{ user.email }}</p></td>
             </tr>
             <tr>
                 <td>Статус анкеты</td>
                 <td>
-                {% if application %}
-                    {% if application.status %}
-                        Принято
-                    {% else %}
-                        На расмотрении
-                    {% endif %}
-                {% else %}
-                    Вы еще не подали анкету.
-                {% endif %}
+                    <p class="personal__info">
+                        {% if application %}
+                            {% if application.status %}
+                                Принято
+                            {% else %}
+                                На расмотрении
+                            {% endif %}
+                        {% else %}
+                            Вы еще не подали анкету.
+                        {% endif %}
+                    </p>
                 </td>
             </tr>
         </table>

@@ -107,7 +107,7 @@ class ApplicationView(View):
                 user.school = c['school']
                 user.choice = c['specialization']
                 print(application)
-                return render(request, self.template_name, context)
+                return redirect('main_app:account')
             else:
                 return render(request, self.template_name, context)
         else:

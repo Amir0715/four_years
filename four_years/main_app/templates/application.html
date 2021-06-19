@@ -6,12 +6,11 @@
 
 {% block content %}
 <div class="form">
-
     <form action="{% url 'main_app:application' %}" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="section__application">
             <div class="row">
-                <div class="column">
+                <div class="column input_text">
                     <table>
                         <tr>
                             <td>{{ form.first_name.label }}</td>
@@ -35,7 +34,7 @@
                         </tr>
                         <tr>
                             <td>{{ form.date_of_birth.label }}</td>
-                            <td>{{ form.date_of_birth }}</td>
+                            <td id="date_of_birth">{{ form.date_of_birth }}</td>
                         </tr>
                         <tr>
                             <td>{{ form.school.label }}</td>
@@ -43,7 +42,7 @@
                         </tr>
                     </table>
                 </div>
-                <div class="column">
+                <div class="column input_text">
                     <table>
                         <tr>
                             <td>{{ form.region.label }}</td>
@@ -76,7 +75,7 @@
                     </table>
                 </div>
             </div>
-            <div class="row">
+            <div class="row row__space_between align__items__center">
                 <div class="column">
                     <table>
                         <tr>
@@ -90,7 +89,7 @@
                     </table>
                 </div>
                 <div class="column description">
-                    <span id="description" class="description__text">Описание</span>
+                    <p id="description" class="description__text">Описание</p>
                 </div>
             </div>
             <div class="row">
@@ -130,7 +129,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="column">
+            <div class="column input_btn column__center">
                 <input type="submit" value="Сохранить"/>
                 <input type="hidden" name="next" value="{% url 'main_app:index' %}"/>
             </div>
