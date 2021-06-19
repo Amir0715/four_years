@@ -29,7 +29,7 @@ class AuthView(View):
 
     errors_msg = {
         'email': 'Пользователя с таким email не существует!',
-        'password': 'Не правильный пароль!'
+        'password': 'Неправильный пароль!'
     }
 
     def get(self, request, *args, **kwargs):
