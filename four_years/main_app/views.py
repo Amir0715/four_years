@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 
 from .forms import CustomUserCreationForm, CustomAuthenticationForm, ApplicationForm
-from .models import Application, Specialization, University, Address
+from .models import Application, Specialization, University, Address, User
 
 
 def index(request):
@@ -27,6 +27,11 @@ class AuthView(View):
     template_name = 'auth.html'
     form_class = CustomAuthenticationForm
 
+    errors_msg = {
+        'email': 'Пользователя с таким email не существует!',
+        'password': 'Не правильный пароль!'
+    }
+
     def get(self, request, *args, **kwargs):
         if auth.get_user(request).is_authenticated:
             return redirect('main_app:index')
@@ -39,13 +44,15 @@ class AuthView(View):
         form = self.form_class(request.POST)
         print(request.POST)
         if form.is_valid():
-            user = auth.authenticate(request, email=form.cleaned_data['email'], password=form.cleaned_data['password'])
-            if user is not None:
-                login(request, user)
-                return redirect('main_app:index')
+            if User.objects.filter(email=(request.POST['email'])).exists():
+                user = auth.authenticate(request, email=form.cleaned_data['email'], password=form.cleaned_data['password'])
+                if user is not None:
+                    login(request, user)
+                    return redirect('main_app:index')
+                else:
+                    form.add_error('password', self.errors_msg['password'])
             else:
-                # TODO: Вернуть что пароль или логин неправильный
-                pass
+                form.add_error('email', self.errors_msg['email'])
         return render(request, self.template_name, {'form': form})
 
 
@@ -83,7 +90,6 @@ class ApplicationView(View):
 
             if form.is_valid():
                 c = form.cleaned_data
-                # TODO Транзакция
                 address = Address(region=c['region'], locality=c['locality'], street=c['street'], house=c['house'],
                         housing=c['housing'], index=c['index'], numbers_house=c['numbers_house'])
                 address.save()
