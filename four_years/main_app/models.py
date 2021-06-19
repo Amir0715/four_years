@@ -33,6 +33,10 @@ class Address(models.Model):
         verbose_name = 'Адресс'
         verbose_name_plural = 'Адресс'
 
+    def __str__(self):
+        return ', '.join(
+            [self.region, self.locality, self.street, self.house, self.housing, self.index, self.numbers_house])
+
 
 class University(models.Model):
     name = models.CharField(verbose_name='Университет', max_length=25)
@@ -44,7 +48,6 @@ class University(models.Model):
         ordering = ['name']
         verbose_name = 'Университет'
         verbose_name_plural = 'Университеты'
-
 
 
 class Specialization(models.Model):
@@ -133,7 +136,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 def user_directory_path(instance, filename):
     # Метод для формирование пути сохранения для файлов
-    return f'{instance.id_user}/application_{instance.pk}/{filename}'
+    return f'application/{instance.id_user}/{filename}'
 
 
 class Application(models.Model):

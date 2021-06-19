@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.core.exceptions import ValidationError
-from django.core.validators import RegexValidator, MinLengthValidator
+from django.core.validators import RegexValidator, MinLengthValidator, FileExtensionValidator
 
 from .models import User, University, Specialization
 
@@ -57,7 +57,8 @@ class ApplicationForm(forms.Form):
         MinLengthValidator(6)])
 
     date_of_birth = forms.DateField(label="Дата рождения",
-                                widget=forms.SelectDateWidget(years=list(map(str, ([x for x in range(1940, 2020)])))))
+                                    widget=forms.SelectDateWidget(
+                                        years=list(map(str, ([x for x in range(1940, 2020)])))))
 
     school = forms.CharField(label='Школа', max_length=150, validators=[
         RegexValidator(r'^[а-яА-ЯёЁ\s]+$', message="Школа должна содержать только кириллицу!", code="invalid")])
@@ -67,19 +68,25 @@ class ApplicationForm(forms.Form):
         RegexValidator(r'^[а-яА-ЯёЁ\s]+$', message="Регион должен содержать только кириллицу!", code="invalid")])
 
     locality = forms.CharField(label='Населенный пункт', max_length=100, validators=[
-        RegexValidator(r'^[а-яА-ЯёЁ\s]+$', message="Населенный пункт должен содержать только кириллицу!", code="invalid")])
+        RegexValidator(r'^[а-яА-ЯёЁ\s]+$', message="Населенный пункт должен содержать только кириллицу!",
+                       code="invalid")])
 
     street = forms.CharField(label='Улица', max_length=100, validators=[
-        RegexValidator(r'^[а-яА-ЯёЁ0-9\s]+$', message="Улица должна содержать только кириллицу и цифру!", code="invalid")])
+        RegexValidator(r'^[а-яА-ЯёЁ0-9\s]+$', message="Улица должна содержать только кириллицу и цифру!",
+                       code="invalid")])
 
     house = forms.CharField(label='Дом', max_length=20, validators=[
-        RegexValidator(r'^[а-яА-ЯёЁ0-9\s]+$', message="Дом должен содержать только кириллицу и цифры!", code="invalid")])
+        RegexValidator(r'^[а-яА-ЯёЁ0-9\s]+$', message="Дом должен содержать только кириллицу и цифры!",
+                       code="invalid")])
 
     housing = forms.CharField(label='Корпус', max_length=20, validators=[
-        RegexValidator(r'^[а-яА-ЯёЁ0-9\s]+$', message="Копус должен содержать только кириллицу и цифры!", code="invalid")])
+        RegexValidator(r'^[а-яА-ЯёЁ0-9\s]+$', message="Копус должен содержать только кириллицу и цифры!",
+                       code="invalid")])
 
     index = forms.CharField(label='Индекс', max_length=6, validators=[MinLengthValidator(6),
-        RegexValidator(r'^\d{1,10}$', message="Индекс должен содержать только цифры!", code="invalid")])
+                                                                      RegexValidator(r'^\d{1,10}$',
+                                                                                     message="Индекс должен содержать только цифры!",
+                                                                                     code="invalid")])
 
     numbers_house = forms.CharField(label='Номер квартиры', max_length=3, validators=[
         RegexValidator(r'^\d{1,10}$', message="Номер квартиры должна содержать только цифры!", code="invalid")])
@@ -89,10 +96,19 @@ class ApplicationForm(forms.Form):
     specialization = forms.ModelChoiceField(label='Специальность', queryset=Specialization.objects.all())
 
     # Файлы
-    file_passport = forms.FileField(label='Паспорт', widget=forms.FileInput(attrs={'accept': '.pdf'}))
-    file_certificate = forms.FileField(label='Атестат', widget=forms.FileInput(attrs={'accept': '.pdf'}))
-    file_statement = forms.FileField(label='Заявление', widget=forms.FileInput(attrs={'accept': '.pdf'}))
-    file_other = forms.FileField(label='Другие документы', allow_empty_file=True, required=False, widget=forms.FileInput(attrs={'accept': '.pdf'}))
+    file_passport = forms.FileField(label='Паспорт', widget=forms.FileInput(attrs={'accept': '.pdf'}), validators=[
+        FileExtensionValidator(allowed_extensions=['pdf'],
+                               message='Файл пасспорта должен быть с расширением pdf!')])
+    file_certificate = forms.FileField(label='Атестат', widget=forms.FileInput(attrs={'accept': '.pdf'}), validators=[
+        FileExtensionValidator(allowed_extensions=['pdf'],
+                               message='Файл атестата должен быть с расширением pdf!')])
+    file_statement = forms.FileField(label='Заявление', widget=forms.FileInput(attrs={'accept': '.pdf'}), validators=[
+        FileExtensionValidator(allowed_extensions=['pdf'],
+                               message='Файл заявления должен быть с расширением pdf!')])
+    file_other = forms.FileField(label='Другие документы', allow_empty_file=True, required=False,
+                                 widget=forms.FileInput(attrs={'accept': '.pdf'}), validators=[
+        FileExtensionValidator(allowed_extensions=['pdf'],
+                                   message='Другой файл  должен быть с расширением pdf!')])
 
     def clean_file_passport(self):
         file = self.cleaned_data.get('file_passport', False)
